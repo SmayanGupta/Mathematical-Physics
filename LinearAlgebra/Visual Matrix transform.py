@@ -13,25 +13,20 @@ from matplotlib.animation import FuncAnimation
 fig = plt.figure()
 
 #limit of axis
-l=20
+l=-8
 axis = plt.axes(xlim =(-l,l),
 				ylim =(-l, l))
 
 # point one and two to draw lines form
 p1=[-9,9]
 p2=[0,0]
-p3=[1,1]
-# declaring line variables
-line1, = axis.plot(p1, p2, lw = 3,color='blue')
-line2, = axis.plot(p2, p1, lw = 3,color='black')
-line3, = axis.plot(p1, p3, lw = 3,color='blue')
-line4, = axis.plot(p3, p1, lw = 3,color='black')
 
+'''
 def init():
     line1.set_data([], [])
     line2.set_data([], [])
     return line1,line2,
-
+'''
 #number of frames 
 n=200
 
@@ -46,47 +41,54 @@ def newmat(A1):
         Coef.append(a1)
     return Coef
      
+
 # function for making rotational matrix
 def rot(angle):
     return [np.sin(angle),np.cos(angle)]
 
 #angle to rotate matrix by
-angle=np.pi/2
+angle=np.pi/3
+
+# function to create a graphic vector space
+def vspace(i):
+    vectorspace=[]
+    for j in range(-10,10,2):
+        p1=[-11,11]
+        p2=[j,j]
+        line1, = axis.plot(p1, p2, lw = 2,color='blue')
+        line2, = axis.plot(p2, p1, lw = 2,color='black')
+        #change array value below to obtain any transformation
+        #[a,b,c,d]=[[a,b]
+        #           [c,d]]
+        Ai=newmat([3,1,0,2])
+        #remove comment below to obtain only transformation matrix
+        #transformed by the angle stated above
+        Ai=newmat([rot(angle)[1],-rot(angle)[0],rot(angle)[0],rot(angle)[1]])
+        A=np.array([[Ai[0][i],Ai[1][i]],[Ai[2][i],Ai[3][i]]])
+        # Making two arrays X1 X2 for x and y axis and transforming them
+        #using equation AX=B. plotting vectors from B to plot transformed axis.
+        #line 1
+        X1=np.array([p1,p2])
+        B1=np.dot(A,X1)
+        line1.set_data(B1[0,:],B1[1,:])
+        vectorspace.append(line1)
+        
+        #line 2
+        X2=np.array([p2,p1])
+        B2=np.dot(A,X2)
+        line2.set_data(B2[0,:],B2[1,:])
+        vectorspace.append(line2)
+    return vectorspace
+
 
 #function iterated over to create a animation
 #each return value here creates one frame
 def update(i):
-    angle=np.pi/3
-    #change array value below to obtain any transformation
-    #[a,b,c,d]=[[a,b]
-    #           [c,d]]
-    Ai=newmat([1,1,0,1])
-    #remove comment below to obtain only transformation matrix
-    #transformed by the angle stated above
-    #Ai=newmat([rot(angle)[1],-rot(angle)[0],rot(angle)[0],rot(angle)[1]])
-    A=np.array([[Ai[0][i],Ai[1][i]],[Ai[2][i],Ai[3][i]]])
-    # Making two arrays X1 X2 for x and y axis and transforming them
-    #using equation AX=B. plotting vectors from B to plot transformed axis.
-    #line 1
-    X1=np.array([p1,p2])
-    B1=np.dot(A,X1)
-    line1.set_data(B1[0,:],B1[1,:])
-    
-    #line 2
-    X2=np.array([p2,p1])
-    B2=np.dot(A,X2)
-    line2.set_data(B2[0,:],B2[1,:])
-    
-    #line 3
-    X3=np.array([p3,p1])
-    B3=np.dot(A,X3)
-    line3.set_data(B3[0,:],B3[1,:])
-    
-    #line 1
-    X4=np.array([p1,p3])
-    B4=np.dot(A,X4)
-    line4.set_data(B4[0,:],B4[1,:])
-    return line1,line2,line3,line4
+    '''
+    '''
+    final=vspace(i)
+    return final
+
 
 
 anim = FuncAnimation(fig, update, 
