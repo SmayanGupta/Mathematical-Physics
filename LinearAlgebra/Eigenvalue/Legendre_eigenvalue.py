@@ -41,6 +41,7 @@ for i in range(1,n):
     legendre[:,i]=fcoef
 
 values,vectors= np.linalg.eig(legendre)
+values[0]=1
 for i in range(n):
     print('{} is the {}th eigenvalue and associated eigenvector is \n'.format(values[i],i),vectors.T[i])
 
